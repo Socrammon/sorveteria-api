@@ -1,36 +1,35 @@
 import http from 'http'; //importação do módulo HTTP
 import fs from 'fs'; //Importação do módulo FS
+import rotas from './routes.js'; //Importação da função rotas
 
 
 //Função para simplicar Inicialização do servidor
-function iniciaServidorHttp() {
+function iniciaServidorHttp(conteudo) {
+
+    //Cria o servidor web
+    const servidor = http.createServer((req, res) => {
+
+        rotas(req, res, { conteudo }); //Execução da função importada
+
+    });
 
     //Parâmetros do servidor
     const porta = 3000;
     const host = 'localhost';
 
-    const notificacao = (`Servidor iniciado com sucesso!\nExecutando em -> http://${host}:${porta}\n`);
-
-    //Cria o servidor web
-    const servidor = http.createServer((req, res) => {
-
-        res.statusCode = 200; //Estado da requisição - OK
-        res.setHeader('Content-type', 'text/plain; charset=utf-8'); //Header HTTP
-        res.end(notificacao);
-
-    });
-
     //Inicia o servidor
     servidor.listen(porta, host, () => {
 
-        console.log(notificacao);
+        console.log(`Servidor iniciado com sucesso!\nExecutando em -> http://${host}:${porta}\n\n`);
+
+        console.log('\x1b[1;31mREGISTRO DE ROTAS ↓\x1b[0m\n');
 
     });
 
 }
 
 //Cria arquivo txt
-fs.writeFile('./mensagem.txt', 'Meus agradecimentos a Venturus e ao TIC em trilhas pelo curso!\n', 'utf-8', (erro) => {
+fs.writeFile('./mensagem.txt', 'Meus agradecimentos a Venturus e ao TIC em trilhas pelo curso!', 'utf-8', (erro) => {
 
     //Modelo de verificação de erro
     if (erro) {
@@ -48,11 +47,11 @@ fs.writeFile('./mensagem.txt', 'Meus agradecimentos a Venturus e ao TIC em trilh
             return;
         }
 
-        console.log(`\nSucesso ao tentar ler arquivo!\nConteudo -> ${conteudo}`);
+        console.log(`\nSucesso ao tentar ler arquivo!\nConteudo -> ${conteudo}\n`);
+
+        iniciaServidorHttp(conteudo);
 
     });
-
-    iniciaServidorHttp();
 
 });
 
